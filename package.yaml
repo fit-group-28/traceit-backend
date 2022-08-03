@@ -1,9 +1,9 @@
-name: t
+name: traceit-backend
 version: 0.1.0.0
 license: BSD3
-author: "Cedric Liang"
-maintainer: "cedric@cedric.app"
-copyright: "2022 Cedric Liang"
+author: "FIT Group 28"
+maintainer: "accounts@cedric.app"
+copyright: "2022 FIT Group 28"
 
 synopsis: INSERT HERE
 category: INSERT HERE
@@ -12,6 +12,19 @@ description: Please see the README on GitHub.
 
 dependencies:
   - base >= 4.7 && < 5
+  - sqlite-simple
+  - text
+  - bytestring
+  - mtl
+  - containers
+  - text-show
+  - wai-extra
+  - servant-server
+  - warp
+  - wai-cors
+  - aeson
+  - openapi3
+  - servant-openapi3
 
 library:
   source-dirs: src
@@ -27,6 +40,6 @@ executables:
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
-      - t
+      - traceit-backend
     verbatim:
       default-language: GHC2021
