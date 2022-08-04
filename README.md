@@ -5,3 +5,5 @@
 
 # Install
 Clone the repo, cd to the directory, then run `stack build` in the terminal.
+
+To run the server, use `stack run` in the terminal, then navigate to `localhost:8080/health` in your browser.
