@@ -12,7 +12,6 @@ description: Please see the README on GitHub.
 
 dependencies:
   - base >= 4.7 && < 5
-  - sqlite-simple
   - text
   - bytestring
   - mtl
@@ -23,8 +22,11 @@ dependencies:
   - warp
   - wai-cors
   - aeson
-  - openapi3
-  - servant-openapi3
+  - http-conduit
+  - timeit
+  - utf8-string
+  - exceptions
+  - stm
 
 library:
   source-dirs: src
@@ -32,7 +34,7 @@ library:
     default-language: GHC2021
 
 executables:
-  t-exe:
+  traceit-backend-exe:
     main: Main.hs
     source-dirs: app
     ghc-options:
