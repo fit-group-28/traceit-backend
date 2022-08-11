@@ -7,9 +7,11 @@ services:
       - db.env # configure postgres
     ports:
         - '5432:5432'
-
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     volumes:
-      - ./sql/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh #init data
+      # - ./sql/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh #init data
       - ./sql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
       # presist data
       - ./postgres-data:/var/lib/postgresql/data

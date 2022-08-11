@@ -6,8 +6,9 @@
 
 ## Running docker image
 
-1. cd into db file
-2. run command `docker-compose up`
+1. start docker desktop
+2. cd into db file
+3. run command `docker-compose up`
 
 ## Modify database
 
@@ -20,3 +21,8 @@
 
 1. exit bash enter command `quit` -> `exit`
 2. exit docker-compose by `ctrl-c` (MAC) or command `docker-compose down` (WIN)
+
+## debug
+
+1. On mac, if you see permission denied for init-database.sh permission denied, try `chmod 777 <file path to db>`
+2. if connecting database failed, try `docker-compose down` and start again
