@@ -18,7 +18,7 @@ cursor = conn.cursor()
 
 # execute an SQL statement using the psycopg2 cursor object
 cursor.execute("SHOW search_path;")
-cursor.execute("select * from test;")
+cursor.execute("select * from user;")
 # enumerate() over the PostgreSQL records
 for i, record in enumerate(cursor):
     print ("\n", type(record))
