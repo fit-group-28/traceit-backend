@@ -1,15 +1,14 @@
 from dataclasses import dataclass
-from dataclasses_json import dataclass_json
-import utils
+from dataclasses_json import DataClassJsonMixin
+from utils import copyToJson
 
 
-@dataclass_json
 @dataclass
-class HelloWorld:
+class HelloWorld(DataClassJsonMixin):
     data: str
 
 
 def hello_world():
     hw = HelloWorld(data="Hello, World!")
 
-    return utils.copyToJson(hw)
+    return copyToJson(hw)
