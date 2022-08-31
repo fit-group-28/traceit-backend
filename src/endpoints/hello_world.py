@@ -1,14 +1,15 @@
+from apidata import generate_api_json
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
-from utils import copyToJson
+from typing import Dict, Any
 
 
 @dataclass
 class HelloWorld(DataClassJsonMixin):
-    data: str
+    greeting: str
 
 
-def hello_world():
-    hw = HelloWorld(data="Hello, World!")
+def hello_world() -> Dict[str, Any]:
+    greeting = HelloWorld(greeting="Hello, World!")
 
-    return copyToJson(hw)
+    return generate_api_json(greeting)

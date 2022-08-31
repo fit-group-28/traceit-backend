@@ -1,9 +1,9 @@
 from copy import deepcopy
-from typing import Dict, Any
 from dataclasses_json import DataClassJsonMixin
+from typing import Dict, Any
 
 
-def copyToJson(obj: DataClassJsonMixin) -> Dict[str, Any]:
+def copy_to_json(obj: DataClassJsonMixin) -> Dict[str, Any]:
     """
     Copy an object to a JSON-serializable dictionary."""
     return deepcopy(obj).to_dict()
