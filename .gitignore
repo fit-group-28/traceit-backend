@@ -6,3 +6,5 @@
 *.sqlite*
 dist-newstyle
 db/postgres-data
+__pycache__
+.mypy_cache
