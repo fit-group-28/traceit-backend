@@ -9,7 +9,7 @@ class HelloWorld(DataClassJsonMixin):
     greeting: str
 
 
-def hello_world() -> Dict[str, Any]:
+def endpoint_hello_world() -> Dict[str, Any]:
     greeting = HelloWorld(greeting="Hello, World!")
 
     return generate_api_json(greeting)
