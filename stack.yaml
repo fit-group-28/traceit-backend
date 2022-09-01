@@ -1,6 +1,0 @@
-resolver: nightly-2022-08-04
-packages:
-  - .
-
-ghc-options:
-  "$everything": -j
