@@ -9,7 +9,6 @@ from endpoints.login import endpoint_login
 
 app = Flask(__name__)
 
-# Setup the Flask-JWT-Extended extension
 app.config["JWT_SECRET_KEY"] = "fit3162traceit"  # Change this!
 jwt = JWTManager(app)
 

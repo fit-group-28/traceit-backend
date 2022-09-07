@@ -6,15 +6,21 @@ from apidata import ApiData, ApiResponse
 
 @dataclass
 class HelloWorld(DataClassJsonMixin):
+    """
+    A class representing the data of a response to a hello world request.
+
+    Attributes:
+        greeting: The greeting message to provide in the response."""
+
     greeting: str
 
 
-def endpoint_hello_world() -> ApiResponse[HelloWorld]:
+def endpoint_hello_world() -> ApiResponse[ApiData[HelloWorld]]:
     """
-    Returns a dictionary containing the greeting.
+    Returns a response to a hello world request.
 
     Returns:
-        A dictionary containing the greeting.
+        A response to the hello world request.
     """
     greeting = HelloWorld(greeting="Hello, World!")
 

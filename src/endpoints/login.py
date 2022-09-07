@@ -9,11 +9,27 @@ from apidata import ApiResponse
 
 @dataclass
 class Login(DataClassJsonMixin):
+    """
+    A class representing the data of a response to a login request.
+
+    Attributes:
+        msg: The message to provide in the response.
+        access_token: The access token if authentication is successful."""
+
     msg: str
     access_token: str = ""
 
 
 def endpoint_login(request: Request) -> ApiResponse[Login]:
+    """
+    Handles the endpoint for logging in.
+
+        Args:
+            request: The request object.
+
+        Returns:
+            A response to the login request.
+    """
     requestJson = request.json
 
     if isinstance(requestJson, dict) and validate_password(
