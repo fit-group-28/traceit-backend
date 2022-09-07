@@ -1,7 +1,7 @@
-from apidata import generate_api_json
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
-from typing import Dict, Any
+
+from apidata import ApiData, ApiResponse
 
 
 @dataclass
@@ -9,7 +9,7 @@ class HelloWorld(DataClassJsonMixin):
     greeting: str
 
 
-def endpoint_hello_world() -> Dict[str, Any]:
+def endpoint_hello_world() -> ApiResponse[HelloWorld]:
     """
     Returns a dictionary containing the greeting.
 
@@ -18,4 +18,5 @@ def endpoint_hello_world() -> Dict[str, Any]:
     """
     greeting = HelloWorld(greeting="Hello, World!")
 
-    return generate_api_json(greeting)
+    apiData = ApiData(data=greeting)
+    return ApiResponse(response=apiData, statusCode=200)
