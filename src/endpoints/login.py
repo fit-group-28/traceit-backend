@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
+import time
 
 from flask import Request
 from flask_jwt_extended import create_access_token
 
 from apidata import ApiResponse
+from userjwt import Jwt
 
 
 @dataclass
@@ -36,7 +38,9 @@ def endpoint_login(request: Request) -> ApiResponse[Login]:
         (username := requestJson.get("username", None)),
         requestJson.get("password", None),
     ):
-        access_token = create_access_token(identity=username)
+        access_token = create_access_token(
+            identity=Jwt(username=username, time_issued=int(time.time())).to_dict()
+        )
         apiResponse = ApiResponse(
             response=Login(msg="Authentication success", access_token=access_token),
             statusCode=200,

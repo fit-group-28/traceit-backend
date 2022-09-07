@@ -4,6 +4,12 @@
 2. brew install postgresql
 3. pipenv install
 
+# Run
+
+To run the server, run
+`pipenv run python src/app.py`
+from the terminal. The server should be exposed at `localhost:3000`.
+
 # Conventions
 
 1. Place endpoints handler functions within their own file in the src/endpoints directory.
