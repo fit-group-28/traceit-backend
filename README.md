@@ -7,7 +7,7 @@
 # Run
 
 To run the server, run
-`pipenv run flask --app src/app.py run --port 3000`
+`FLASK_DEBUG=true pipenv run flask --app src/app.py run --port 3000`
 from the terminal. The server should be exposed at `localhost:3000`.
 
 # Conventions
