@@ -95,12 +95,20 @@ create table "User"
     user_id serial not null
         constraint user_pk
             primary key,
-    username char(32),
-    password varchar not null
+    username char(32)
 );
 
 alter table "User" owner to postgres;
 
+create table if not exists "UserCredentials"
+(
+    id serial REFERENCES User(id),
+    password blob not null,
+    salt blob not null,
+    id primary key
+);
+
+alter table "User" owner to postgres;
 
 
 INSERT INTO public."Product" (product_id, name, price, description) VALUES (1, 'Milk', 4, '2L Milk');
