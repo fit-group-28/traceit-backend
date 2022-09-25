@@ -1,3 +1,4 @@
+from endpoints.user_regist import endpoint_register
 from flask import Flask
 from flask import request
 from flask_jwt_extended import get_jwt_identity
@@ -28,7 +29,10 @@ def hello_world():
     user_jwt = get_user_jwt()
     return endpoint_hello_world(user_jwt).response_tuple()
 
-
+@app.route("/register", methods=["POST"])
+def register():
+    return endpoint_register(request).response_tuple()
+    4
 # UTILS
 def get_user_jwt() -> Jwt | None:
     """

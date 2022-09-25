@@ -3,7 +3,6 @@
 # import the connect library from psycopg2
 from psycopg2 import connect
 
-database_name = "test"
 # declare connection instance
 conn = connect(    
     database = "test_database",
