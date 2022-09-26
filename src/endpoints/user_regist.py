@@ -5,10 +5,8 @@ from uuid import uuid4
 from dataclasses_json import DataClassJsonMixin
 import time
 from dbconnector import connExecute, connQuery
-
 from flask import Request
 from flask_jwt_extended import create_access_token
-
 from apidata import ApiResponse
 from userjwt import Jwt
 import psycopg2
@@ -23,7 +21,6 @@ class Register(DataClassJsonMixin):
         access_token: The access token if authentication is successful."""
 
     msg: str
-    access_token: str = ""
 
 def endpoint_register(request: Request) -> ApiResponse[Register]:
     """
@@ -43,7 +40,10 @@ def endpoint_register(request: Request) -> ApiResponse[Register]:
         email := requestJson.get("email", None),
     ):
         create_user(username, password, email)
-        apiResponse = ApiResponse("User created", 200)
+        apiResponse = ApiResponse(
+            response=Register(msg="User created"), statusCode=200
+        )
+
     else:
         apiResponse = ApiResponse(
             response=Register(msg="User create failure"), statusCode=401
@@ -64,7 +64,7 @@ def create_user(username: str, password: str, email:str) -> bool:
 
     # hash the password with the salt
     hashed_password = hash(password.join(salt))
-    user_id = uuid4().hex
+    user_id = str(uuid4())
     # insert the user into the database
     conn = psycopg2.connect(    
         database = "test_database",
@@ -76,8 +76,8 @@ def create_user(username: str, password: str, email:str) -> bool:
     print(conn)
     cursor = conn.cursor()
 
-    cursor.execute("INSERT INTO user (id, username, email) VALUES (%s,%s,%s);"  , ("test", username, email))
-    cursor.execute("INSERT INTO userCredentials(user_id, salt, password) VALUES(%s,%s,%s);" , (user_id, salt, hashed_password))
+    cursor.execute("INSERT INTO \"User\" (id, username, email) VALUES (%s,%s,%s);"  , (user_id, username, email))
+    cursor.execute("INSERT INTO \"UserCredentials\" (id, salt, password) VALUES (%s,%s,%s);" , (user_id, salt, hashed_password))
     return True
 
 def validate(username: str, password: str, email:str) -> bool:
