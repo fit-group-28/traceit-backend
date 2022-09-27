@@ -96,7 +96,7 @@ create table "User"
         constraint user_pk
             primary key,
     username char(32),
-    email char(64)
+    email char(320)
 );
 
 alter table "User" owner to postgres;

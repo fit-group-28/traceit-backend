@@ -102,7 +102,7 @@ def validate(username: str, password: str, email:str) -> bool:
         return False
 
     regex = re.compile(r"([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\[[\t -Z^-~]*])")
-    if len(email) < 3 or len(email) > 20 or not re.fullmatch(regex, email):
+    if len(email) < 3 or len(email) > 320 or not re.fullmatch(regex, email):
         return False
 
     return True
