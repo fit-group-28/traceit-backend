@@ -6,6 +6,7 @@ from dataclasses_json import DataClassJsonMixin
 from dbconnector import connExecute, connQuery
 from flask import Request
 from apidata import ApiResponse
+from argon2 import PasswordHasher
 
 
 @dataclass
@@ -60,6 +61,9 @@ def create_user(username: str, password: str, email: str) -> bool:
     """
     Create a user by adding them to the database.
     """
+
+    ph = PasswordHasher()
+
     # random generated salt
     ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
     chars = []
@@ -68,7 +72,7 @@ def create_user(username: str, password: str, email: str) -> bool:
     salt = "".join(chars)
 
     # hash the password with the salt
-    hashed_password = hash(password.join(salt))
+    hashed_password = ph.hash(password.join(salt))
     user_id = str(uuid4())
 
     # insert the user into the database

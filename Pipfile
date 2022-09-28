@@ -8,6 +8,7 @@ flask = "*"
 psycopg2 = "*"
 dataclasses-json = "*"
 flask-jwt-extended = "*"
+argon2-cffi = "*"
 
 [dev-packages]
 black = "*"

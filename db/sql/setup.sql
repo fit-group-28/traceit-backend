@@ -107,7 +107,7 @@ create table if not exists "UserCredentials"
         constraint usercredentials_id
             references "User"
             on update cascade on delete cascade,
-    password char(64),
+    password char(128),
     salt char(16)
 );
 

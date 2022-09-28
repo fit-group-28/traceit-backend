@@ -4,9 +4,12 @@ import time
 
 from flask import Request
 from flask_jwt_extended import create_access_token
+from argon2 import PasswordHasher
 
 from apidata import ApiResponse
 from userjwt import Jwt
+
+from dbconnector import connQuery
 
 
 @dataclass
@@ -64,9 +67,24 @@ def validate_password(username: str, password: str) -> bool:
     Returns:
         True if the username and password are valid, False otherwise.
     """
-    return (
-        username is not None
-        and password is not None
-        and username == "test"
-        and password == "test"
-    )
+    ph = PasswordHasher()
+
+    try:
+        fetchHashedCreds = connQuery(
+            [
+                (
+                    'SELECT salt, password FROM "UserCredentials" INNER JOIN "User" ON "UserCredentials".id = "User".id WHERE username = %s',
+                    (username,),
+                )
+            ]
+        )
+        salt, hashed_pw = fetchHashedCreds[0][0]
+
+        hashed_pw = hashed_pw.strip()
+        salt = salt.strip()
+
+        ph.verify(hashed_pw, password.join(salt))
+        return True
+
+    except Exception:
+        return False
