@@ -92,23 +92,26 @@ alter table "Stock" owner to postgres;
 
 create table "User"
 (
-    user_id serial not null
+    id char(50) not null
         constraint user_pk
             primary key,
-    username char(32)
+    username char(32),
+    email char(320)
 );
 
 alter table "User" owner to postgres;
 
 create table if not exists "UserCredentials"
 (
-    id serial REFERENCES User(id),
-    password blob not null,
-    salt blob not null,
-    id primary key
+    id char(50) not null
+        constraint usercredentials_id
+            references "User"
+            on update cascade on delete cascade,
+    password char(64),
+    salt char(16)
 );
 
-alter table "User" owner to postgres;
+alter table "UserCredentials" owner to postgres;
 
 
 INSERT INTO public."Product" (product_id, name, price, description) VALUES (1, 'Milk', 4, '2L Milk');
@@ -139,4 +142,4 @@ INSERT INTO public."Orderline" (line_id, order_id, product_id, quantity, subtota
 INSERT INTO public."Orderline" (line_id, order_id, product_id, quantity, subtotal) VALUES (2, 2, 1, 30, 120);
 INSERT INTO public."Orderline" (line_id, order_id, product_id, quantity, subtotal) VALUES (3, 2, 3, 30, 400);
 
-INSERT INTO public."User" (user_id, username, password) VALUES (1, 'Douglas', '123456');
+INSERT INTO public."User" (id, username, email) VALUES ("test","test","abc@test.com");

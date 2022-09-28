@@ -1,3 +1,4 @@
+from endpoints.user_regist import endpoint_register
 from flask import Flask
 from flask import request
 from flask_jwt_extended import get_jwt_identity
@@ -17,7 +18,7 @@ jwt = JWTManager(app)
 
 
 # ENDPOINTS
-@app.route("/login", methods=["POST"])
+@app.route("/account/login", methods=["POST"])
 def login():
     return endpoint_login(request).response_tuple()
 
@@ -28,7 +29,9 @@ def hello_world():
     user_jwt = get_user_jwt()
     return endpoint_hello_world(user_jwt).response_tuple()
 
-
+@app.route("/account/register", methods=["POST"])
+def register():
+    return endpoint_register(request).response_tuple()
 # UTILS
 def get_user_jwt() -> Jwt | None:
     """

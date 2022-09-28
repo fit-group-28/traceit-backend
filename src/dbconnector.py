@@ -60,6 +60,7 @@ def connQuery(queries: Iterable[Tuple[str] | Tuple[str, Tuple]]) -> List[Tuple]:
 
     results = []
 
+    print(queries)
     try:
         for query in queries:
             cursor.execute(*query)
