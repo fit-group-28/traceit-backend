@@ -3,13 +3,9 @@ import random
 import re
 from uuid import uuid4
 from dataclasses_json import DataClassJsonMixin
-import time
 from dbconnector import connExecute, connQuery
 from flask import Request
-from flask_jwt_extended import create_access_token
 from apidata import ApiResponse
-from userjwt import Jwt
-import psycopg2
 
 
 @dataclass
@@ -41,12 +37,20 @@ def endpoint_register(request: Request) -> ApiResponse[Register]:
         password := requestJson.get("password", None),
         email := requestJson.get("email", None),
     ):
-        create_user(username, password, email)
-        apiResponse = ApiResponse(response=Register(msg="User created"), statusCode=200)
+        try:
+            create_user(username, password, email)
+            apiResponse = ApiResponse(
+                response=Register(msg="Registration success"),
+                statusCode=200,
+            )
+        except Exception:
+            apiResponse = ApiResponse(
+                response=Register(msg="Registration failure"), statusCode=401
+            )
 
     else:
         apiResponse = ApiResponse(
-            response=Register(msg="User create failure"), statusCode=401
+            response=Register(msg="Invalid credentials format"), statusCode=401
         )
 
     return apiResponse
@@ -66,25 +70,20 @@ def create_user(username: str, password: str, email: str) -> bool:
     # hash the password with the salt
     hashed_password = hash(password.join(salt))
     user_id = str(uuid4())
-    # insert the user into the database
-    conn = psycopg2.connect(
-        database="test_database",
-        host="0.0.0.0",
-        port=5432,
-        user="postgres",
-        password="postgres",
-    )
-    print(conn)
-    cursor = conn.cursor()
 
-    cursor.execute(
-        'INSERT INTO "User" (id, username, email) VALUES (%s,%s,%s);',
-        (user_id, username, email),
-    )
-    cursor.execute(
-        'INSERT INTO "UserCredentials" (id, salt, password) VALUES (%s,%s,%s);',
-        (user_id, salt, hashed_password),
-    )
+    # insert the user into the database
+    dbOps = [
+        (
+            'INSERT INTO "User" (id, username, email) VALUES (%s,%s,%s);',
+            (user_id, username, email),
+        ),
+        (
+            'INSERT INTO "UserCredentials" (id, salt, password) VALUES (%s,%s,%s);',
+            (user_id, salt, hashed_password),
+        ),
+    ]
+    connExecute(dbOps)
+
     return True
 
 

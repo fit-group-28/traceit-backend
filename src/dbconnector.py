@@ -7,7 +7,7 @@ def __make_connection() -> psycopg2.extensions.connection:
     Make a connection to the database. Don't call this directly, instead use the provided functions.
     """
     return psycopg2.connect(
-        database="postgres",
+        database="test_database",
         user="postgres",
         password="postgres",
         host="localhost",
