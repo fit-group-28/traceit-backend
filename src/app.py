@@ -29,9 +29,12 @@ def hello_world():
     user_jwt = get_user_jwt()
     return endpoint_hello_world(user_jwt).response_tuple()
 
+
 @app.route("/account/register", methods=["POST"])
 def register():
     return endpoint_register(request).response_tuple()
+
+
 # UTILS
 def get_user_jwt() -> Jwt | None:
     """
