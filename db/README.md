@@ -5,17 +5,18 @@
 1. Install docker desktop via https://docs.docker.com/compose/install/compose-desktop/
 2. `pip install psycopg2`
 
-    **For mac m1**
-    ```
-    brew install libpq --build-from-source
-    brew install openssl
-    brew install postgres
+   **For mac m1**
 
-    export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib -L/opt/homebrew/opt/libpq/lib"
-    export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include -I/opt/homebrew/opt/libpq/include"
+   ```
+   brew install libpq --build-from-source
+   brew install openssl
+   brew install postgres
 
-    pip3 install psycopg2
-    ```
+   export LDFLAGS="-L/opt/homebrew/opt/openssl@1.1/lib -L/opt/homebrew/opt/libpq/lib"
+   export CPPFLAGS="-I/opt/homebrew/opt/openssl@1.1/include -I/opt/homebrew/opt/libpq/include"
+
+   pip3 install psycopg2
+   ```
 
 ## Running docker image
 
@@ -35,6 +36,11 @@
 
 1. exit bash enter command `quit` -> `exit`
 2. exit docker-compose by `ctrl-c` (MAC) or command `docker-compose down` (WIN)
+
+## Reset databse
+
+1. Make sure container is down `docker-compose down`
+2. Delete the external volume `docker volume rm database-data`
 
 ## test for query database outside docker
 
