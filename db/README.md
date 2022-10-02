@@ -21,7 +21,8 @@
 
 1. start docker desktop
 2. cd into db file
-3. run command `docker-compose up`
+3. Create a volume `docker volume create database-data`
+4. run command `docker-compose up -d`
 
 ## Modify database
 
