@@ -3,6 +3,7 @@ from dataclasses_json import DataClassJsonMixin
 
 from apidata import ApiData, ApiResponse
 from userjwt import Jwt
+from dbconnector import connQuery
 
 
 @dataclass
@@ -16,8 +17,8 @@ class UserDetails(DataClassJsonMixin):
         email: The email of the user.
     """
 
+    uid: str
     username: str
-    time_issued: int
     email: str
 
 
@@ -41,15 +42,35 @@ def endpoint_user_details(
             statusCode=401,
         )
     else:
-        apiResponse = ApiResponse(
-            response=ApiData(
-                data=UserDetails(
-                    username=user_jwt.username,
-                    time_issued=user_jwt.time_issued,
-                    email=user_jwt.email,
-                )
-            ),
-            statusCode=200,
-        )
+
+        try:
+            fetchUser = connQuery(
+                [
+                    (
+                        'SELECT id, username, email FROM "User" WHERE username = %s',
+                        (user_jwt.username,),
+                    )
+                ]
+            )
+
+            uid, username, email = fetchUser[0][0]
+            uid, username, email = uid.strip(), username.strip(), email.strip()
+
+            apiResponse = ApiResponse(
+                response=ApiData(
+                    data=UserDetails(
+                        uid=uid,
+                        username=username,
+                        email=email,
+                    )
+                ),
+                statusCode=200,
+            )
+
+        except Exception as e:
+            apiResponse = ApiResponse(
+                response=UserDetailsFailure(msg="Database error"),
+                statusCode=500,
+            )
 
     return apiResponse
