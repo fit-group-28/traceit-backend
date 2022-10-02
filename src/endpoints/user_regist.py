@@ -8,7 +8,6 @@ from flask import Request
 from apidata import ApiResponse
 from argon2 import PasswordHasher
 
-
 @dataclass
 class Register(DataClassJsonMixin):
     """
@@ -19,7 +18,6 @@ class Register(DataClassJsonMixin):
         access_token: The access token if authentication is successful."""
 
     msg: str
-
 
 def endpoint_register(request: Request) -> ApiResponse[Register]:
     """
@@ -33,7 +31,7 @@ def endpoint_register(request: Request) -> ApiResponse[Register]:
     """
     requestJson = request.json
 
-    if isinstance(requestJson, dict) and validate(
+    if isinstance(requestJson, dict) and validate(                                                                                                                                                                   
         (username := requestJson.get("username", None)),
         password := requestJson.get("password", None),
         email := requestJson.get("email", None),
@@ -56,12 +54,11 @@ def endpoint_register(request: Request) -> ApiResponse[Register]:
 
     return apiResponse
 
-
 def create_user(username: str, password: str, email: str) -> bool:
     """
     Create a user by adding them to the database.
     """
-
+    
     ph = PasswordHasher()
 
     # random generated salt
@@ -87,11 +84,9 @@ def create_user(username: str, password: str, email: str) -> bool:
         ),
     ]
     connExecute(dbOps)
-
     return True
 
-
-def validate(username: str, password: str, email: str) -> bool:
+def validate(username: str, password: str, email:str) -> bool:
     """
     Validate a username and password.
 
@@ -105,10 +100,21 @@ def validate(username: str, password: str, email: str) -> bool:
     """
     if username is None or password is None or email is None:
         return False
+    
+    user = connQuery(
+            [
+                (
+                    'SELECT username ON "User" WHERE username = %s',
+                    (username,),
+                )
+            ]
+        )
+    if user:
+        return False
 
     if len(username) < 3 or len(username) > 20:
         return False
-
+    
     if len(password) < 8 or len(password) > 20:
         return False
 
