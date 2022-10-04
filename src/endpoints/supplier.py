@@ -29,7 +29,10 @@ class Supplier(DataClassJsonMixin):
     latitude: float
     address: str
 
-def endpoint_supplier_get(user_jwt: Jwt | None, request: Request) -> ApiResponse[Supplier| JwtFailure | DbFailure]:
+
+def endpoint_supplier_get(
+    user_jwt: Jwt | None, request: Request
+) -> ApiResponse[Supplier | JwtFailure | DbFailure]:
     """
     Handles the endpoint for getting supplier details.
 
@@ -46,8 +49,14 @@ def endpoint_supplier_get(user_jwt: Jwt | None, request: Request) -> ApiResponse
         requestJson = request.get_json()
         supplier = get_supplier(requestJson.get("supplier_id", None))
         apiResponse = ApiResponse(
-            response=Supplier(uid=supplier["supplier_id"], username=supplier["name"], longitude=supplier["longitude"], latitude=supplier["latitude"], number=supplier["phone_number"],
-            address=supplier["address"]),
+            response=Supplier(
+                uid=supplier["supplier_id"],
+                username=supplier["name"].strip(),
+                longitude=supplier["longitude"],
+                latitude=supplier["latitude"],
+                number=supplier["phone_number"],
+                address=supplier["address"],
+            ),
             statusCode=200,
         )
     except Exception as e:
@@ -55,21 +64,34 @@ def endpoint_supplier_get(user_jwt: Jwt | None, request: Request) -> ApiResponse
 
     return apiResponse
 
+
 def get_supplier(id: str) -> Supplier:
     """
     Get the supplier details for a user.
     """
     supplier = connQuery(
-        [('SELECT supplier_id, name, longitude, latitude, phone_number, address FROM "Supplier" WHERE supplier_id = %s', (id,))]
+        [
+            (
+                'SELECT supplier_id, name, longitude, latitude, phone_number, address FROM "Supplier" WHERE supplier_id = %s',
+                (id,),
+            )
+        ]
     )
 
     if not supplier[0]:
         return None
     supplier = supplier[0][0]
     supplierDist = {}
-    supplierDist = {"supplier_id": supplier[0], "name": supplier[1], "longitude": supplier[2], "latitude":supplier[3], "phone_number":supplier[4],
-    "address":supplier[5]}
+    supplierDist = {
+        "supplier_id": supplier[0],
+        "name": supplier[1],
+        "longitude": supplier[2],
+        "latitude": supplier[3],
+        "phone_number": supplier[4],
+        "address": supplier[5],
+    }
     return supplierDist
+
 
 def endpoint_supplier_product_get(user_jwt: Jwt | None) -> ApiResponse[Supplier]:
     """
@@ -83,7 +105,7 @@ def endpoint_supplier_product_get(user_jwt: Jwt | None) -> ApiResponse[Supplier]
     """
     if not user_jwt:
         return jwt_failure()
-    
+
     try:
         supplier = get_supplier_product(user_jwt.user_id)
         apiResponse = ApiResponse(
@@ -100,8 +122,8 @@ def endpoint_supplier_product_get(user_jwt: Jwt | None) -> ApiResponse[Supplier]
     except Exception as e:
         return db_failure(e)
 
-
     return apiResponse
+
 
 def get_supplier_product(user_id: str) -> Supplier:
     """
