@@ -1,4 +1,3 @@
-from re import S
 from endpoints.user_regist import endpoint_register
 from flask import Flask
 from flask import request

@@ -12,3 +12,7 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - ./sql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+      - database-data:/var/lib/postgresql/data
+volumes:
+  database-data:
+    external: true
