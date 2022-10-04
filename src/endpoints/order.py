@@ -97,7 +97,7 @@ def endpoint_order_patch(
             if order.order_id == requestJson["order_id"]
         )
 
-        __updateOrderStatusQuery(requestJson["order_id"], requestJson["order_status"])
+        updateOrderStatusQuery(requestJson["order_id"], requestJson["order_status"])
 
         updatedOrder = next(
             order
@@ -166,7 +166,7 @@ def endpoint_order_post(
         return request_failure("Invalid request body")
 
     try:
-        new_order_id = __createOrderQuery(user_jwt.username, requestJson["products"])
+        new_order_id = createOrderQuery(user_jwt.username, requestJson["products"])
 
         createdOrder = next(
             order
@@ -183,7 +183,7 @@ def endpoint_order_post(
         return db_failure(e)
 
 
-def __createOrderQuery(username: str, prod_id_qty_pairs: List[Dict[str, int]]) -> int:
+def createOrderQuery(username: str, prod_id_qty_pairs: List[Dict[str, int]]) -> int:
     """
     Performs the database query for creating an order.
 
@@ -273,7 +273,7 @@ def fetchOrdersQuery(username: str) -> List[Order]:
     return list(orderDict.values())
 
 
-def __updateOrderStatusQuery(order_id: int, order_status: str) -> None:
+def updateOrderStatusQuery(order_id: int, order_status: str) -> None:
     """
     Updates the status of an order.
 
