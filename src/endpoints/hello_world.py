@@ -24,11 +24,11 @@ def endpoint_hello_world(user_jwt: Jwt | None) -> ApiResponse[ApiData[HelloWorld
         A response to the hello world request.
     """
     greeting = (
-        HelloWorld(greeting="Hello, World!")
-        if not user_jwt
-        else HelloWorld(
+        HelloWorld(
             greeting=f"Hello, {user_jwt.username}. Your token was created at {user_jwt.time_issued}!"
         )
+        if user_jwt
+        else HelloWorld(greeting="Hello, World!")
     )
 
     apiData = ApiData(data=greeting)

@@ -44,16 +44,13 @@ def endpoint_login(request: Request) -> ApiResponse[Login]:
         access_token = create_access_token(
             identity=Jwt(username=username, time_issued=int(time.time())).to_dict()
         )
-        apiResponse = ApiResponse(
+        return ApiResponse(
             response=Login(msg="Authentication success", access_token=access_token),
             statusCode=200,
         )
-    else:
-        apiResponse = ApiResponse(
-            response=Login(msg="Authentication failure"), statusCode=401
-        )
 
-    return apiResponse
+    else:
+        return ApiResponse(response=Login(msg="Authentication failure"), statusCode=401)
 
 
 def validate_password(username: str, password: str) -> bool:

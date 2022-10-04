@@ -51,8 +51,7 @@ class RequestFailure(DataClassJsonMixin):
 
 def request_failure(msg: str):
     return ApiResponse(
-        response=RequestFailure(msg="Request failure: " + str(msg).strip()),
-        statusCode=400,
+        response=RequestFailure(msg=f"Request failure: {msg.strip()}"), statusCode=400
     )
 
 
@@ -87,6 +86,6 @@ class DbFailure(DataClassJsonMixin):
 
 def db_failure(e: Exception):
     return ApiResponse(
-        response=DbFailure(msg="Database query error: " + str(e).strip()),
+        response=DbFailure(msg=f"Database query error: {str(e).strip()}"),
         statusCode=500,
     )

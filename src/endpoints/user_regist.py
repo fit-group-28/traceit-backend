@@ -66,9 +66,7 @@ def create_user(username: str, password: str, email: str) -> bool:
 
     # random generated salt
     ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    chars = []
-    for _ in range(16):
-        chars.append(random.choice(ALPHABET))
+    chars = [random.choice(ALPHABET) for _ in range(16)]
     salt = "".join(chars)
 
     # hash the password with the salt
@@ -115,7 +113,4 @@ def validate(username: str, password: str, email: str) -> bool:
     regex = re.compile(
         r"([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\[[\t -Z^-~]*])"
     )
-    if len(email) < 3 or len(email) > 320 or not re.fullmatch(regex, email):
-        return False
-
-    return True
+    return bool(len(email) >= 3 and len(email) <= 320 and re.fullmatch(regex, email))

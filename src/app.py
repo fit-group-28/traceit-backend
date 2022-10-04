@@ -76,7 +76,7 @@ def get_user_jwt() -> Jwt | None:
             if (user_identity := get_jwt_identity())
             else None
         )
-    except:
+    except Exception:
         return None
 
 
