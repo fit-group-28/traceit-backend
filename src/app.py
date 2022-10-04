@@ -56,7 +56,7 @@ def user_details():
 @jwt_required()
 def supplier_get():
     user_jwt = get_user_jwt()
-    return endpoint_supplier_get(user_jwt, request).response_tuple()
+    return endpoint_supplier_get(user_jwt).response_tuple()
 
 
 # supplier/products
