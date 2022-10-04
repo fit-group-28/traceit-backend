@@ -29,17 +29,12 @@ import datetime
 class Supplier(DataClassJsonMixin):
     """
     A class representing the data of a response to a user details request.
-
-    Attributes:
-        username: The username of the user.
-        time_issued: The time the user's token was issued.
-        email: The email of the user.
     """
 
     uid: str
     username: str
     number: int
-    longtitude: float
+    longitude: float
     latitude: float
 
 def endpoint_supplier_get(user_jwt: Jwt | None, request: Request) -> ApiResponse[Supplier| JwtFailure | DbFailure]:
@@ -58,15 +53,9 @@ def endpoint_supplier_get(user_jwt: Jwt | None, request: Request) -> ApiResponse
     try:
         requestJson = request.get_json()
         supplier = get_supplier(requestJson.get("supplier_id", None))
+        print("-------------",supplier)
         apiResponse = ApiResponse(
-            response=Supplier(
-                msg="Supplier details retrieved",
-                supplier_id=supplier.supplier_id,
-                name=supplier.name,
-                longitude=supplier.longitude,
-                latitude=supplier.latitude,
-                number=supplier.phone_number
-            ),
+            response=Supplier(uid=supplier["supplier_id"], username=supplier["name"], longitude=supplier["longitude"], latitude=supplier["latitude"], number=supplier["phone_number"]),
             statusCode=200,
         )
     except Exception as e:
@@ -82,18 +71,12 @@ def get_supplier(id: str) -> Supplier:
         [('SELECT supplier_id, name, longitude, latitude, phone_number FROM "Supplier" WHERE supplier_id = %s', (id,))]
     )
 
-    if not supplier:
+    if not supplier[0]:
         return None
-        
-    supplierDict = {}
-    for row in supplier:
-        supplierId = row[0]
-        name = row[1]
-        longitude = row[2]
-        latitude = row[3]
-        phone_number = row[4]
-
-    return list(supplierDict.values())
+    supplier = supplier[0][0]
+    supplierDist = {}
+    supplierDist = {"supplier_id": supplier[0], "name": supplier[1], "longitude": supplier[2], "latitude":supplier[3], "phone_number":supplier[4]}
+    return supplierDist
 
 def endpoint_supplier_product_get(user_jwt: Jwt | None) -> ApiResponse[Supplier]:
     """
