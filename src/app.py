@@ -1,3 +1,4 @@
+from re import S
 from endpoints.user_regist import endpoint_register
 from flask import Flask
 from flask import request
@@ -47,7 +48,19 @@ def user_details():
     user_jwt = get_user_jwt()
     return endpoint_user_details(user_jwt).response_tuple()
 
+@app.route("/supplier", methods=["GET"])
+@jwt_required()
+def supplier_get():
+    user_jwt = get_user_jwt()
+    return endpoint_supplier_get(user_jwt).response_tuple()
 
+#supplier/products
+@app.route("/supplier/products", methods=["GET"])
+@jwt_required()
+def supplier_products_get():
+    user_jwt = get_user_jwt()
+    return endpoint_supplier_products_get(user_jwt).response_tuple()
+    
 @app.route("/order", methods=["GET", "POST", "PATCH"])
 @jwt_required()
 def order():
