@@ -1,11 +1,9 @@
 from dataclasses import dataclass
-from unicodedata import name
 from dataclasses_json import DataClassJsonMixin
 
 from apidata import (
     ApiData,
     ApiResponse,
-    RequestFailure,
     jwt_failure,
     db_failure,
     JwtFailure,
@@ -13,14 +11,7 @@ from apidata import (
     request_failure,
 )
 from userjwt import Jwt
-from dbconnector import connQuery, make_connection, connExecute
-from suppliertype import Supplier
-
-from typing import List, Dict
-from producttype import ProductPayload, Product
-from ordertype import Order
-from suppliertype import Supplier
-
+from dbconnector import connQuery
 from flask import Request
 import datetime
 
@@ -54,7 +45,6 @@ def endpoint_supplier_get(user_jwt: Jwt | None, request: Request) -> ApiResponse
     try:
         requestJson = request.get_json()
         supplier = get_supplier(requestJson.get("supplier_id", None))
-        print("-------------",supplier)
         apiResponse = ApiResponse(
             response=Supplier(uid=supplier["supplier_id"], username=supplier["name"], longitude=supplier["longitude"], latitude=supplier["latitude"], number=supplier["phone_number"],
             address=supplier["address"]),
