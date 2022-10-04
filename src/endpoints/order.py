@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from re import M
 from dataclasses_json import DataClassJsonMixin
 
 from apidata import (
