@@ -15,7 +15,8 @@ create table if not exists "Supplier" (
     name char(64),
     phone_number int,
     longitude float,
-    latitude float
+    latitude float,
+    address varchar
 );
 alter table "Supplier" owner to postgres;
 create table if not exists "Product" (
@@ -48,22 +49,27 @@ INSERT INTO public."Supplier" (
     name, 
     phone_number,
     longitude,
-    latitude)
-VALUES ('One''s Grocery shop', 12345678, -37.9280453, 145.1182741);
+    latitude,
+    address)
+VALUES ('One''s Grocery shop', 12345678, -37.9280453, 145.1182741,'359 Clayton Rd, Clayton VIC 3168, Australia');
 
 INSERT INTO public."Supplier" (
     name, 
     phone_number,
     longitude,
-    latitude)
-VALUES ('Two Dollor Shop', 12345678, -37.9263162, 145.1193540);
+    latitude,
+    address)
+VALUES ('Two Dollor Shop', 12345678, -37.9263162, 145.1193540, 'M02/2107 Priness Hwy, Clayton VIC 3168, Australia');
 
 INSERT INTO public."Supplier" (
     name, 
     phone_number,
     longitude,
-    latitude)
-VALUES ('Hongkong Supermarket', 12345678, -37.8665312, 145.0936994);
+    latitude,
+    address)
+VALUES ('Hongkong Supermarket', 
+12345678, -37.8665312, 145.0936994, 
+'42 High St, Clayton VIC 3168, Australia');
 
 INSERT INTO public."User" (id, username, email)
 VALUES ('1', 'admin', 'admin@localhost');
