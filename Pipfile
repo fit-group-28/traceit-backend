@@ -9,6 +9,7 @@ psycopg2 = "*"
 dataclasses-json = "*"
 flask-jwt-extended = "*"
 argon2-cffi = "*"
+funcy = "*"
 
 [dev-packages]
 black = "*"

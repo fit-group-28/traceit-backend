@@ -43,8 +43,6 @@ create table if not exists "Orderline" (
     PRIMARY KEY (order_id, product_id)
 );
 alter table "Orderline" owner to postgres;
-
-
 INSERT INTO public."Supplier" (
     name, 
     phone_number,
@@ -73,6 +71,14 @@ VALUES ('Hongkong Supermarket',
 
 INSERT INTO public."User" (id, username, email)
 VALUES ('1', 'admin', 'admin@localhost');
+create table if not exists "UserProductOffset" (
+    user_id char(50) constraint user_fk references "User" on update cascade on delete cascade,
+    product_id integer constraint product_id references "Product",
+    quantity integer,
+    subtotal double precision,
+    PRIMARY KEY (user_id, product_id)
+);
+alter table "UserProductOffset" owner to postgres;
 INSERT INTO public."Product" (
         product_id,
         name,

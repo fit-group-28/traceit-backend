@@ -1,11 +1,10 @@
-from endpoints.user_regist import endpoint_register
-from flask import Flask
-from flask import request
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
+from flask import Flask, request
+from flask_jwt_extended import get_jwt_identity, jwt_required, JWTManager
 
 from endpoints.hello_world import endpoint_hello_world
+from endpoints.product import endpoint_product_get
+from endpoints.user_regist import endpoint_register
+from endpoints.inventory import endpoint_inventory_get, endpoint_inventory_patch
 from endpoints.order import (
     endpoint_order_get,
     endpoint_order_post,
@@ -16,6 +15,7 @@ from endpoints.supplier import (
 )
 from endpoints.user_details import endpoint_user_details
 from endpoints.login import endpoint_login
+
 from userjwt import Jwt
 
 
@@ -75,6 +75,23 @@ def order():
     elif request.method == "PATCH":
         user_jwt = get_user_jwt()
         return endpoint_order_patch(user_jwt, request).response_tuple()
+
+
+@app.route("/inventory", methods=["GET", "PATCH"])
+@jwt_required()
+def inventory():
+    if request.method == "GET":
+        user_jwt = get_user_jwt()
+        return endpoint_inventory_get(user_jwt).response_tuple()
+    elif request.method == "PATCH":
+        user_jwt = get_user_jwt()
+        return endpoint_inventory_patch(user_jwt, request).response_tuple()
+
+
+@app.route("/product", methods=["GET"])
+@jwt_required()
+def product():
+    return endpoint_product_get().response_tuple()
 
 
 # UTILS

@@ -13,12 +13,9 @@ from apidata import (
 )
 from userjwt import Jwt
 from dbconnector import connQuery, make_connection, connExecute
-from ordertype import Order
+from schematypes import Order, ProductPayload, Product, Supplier
 
 from typing import List, Dict
-from producttype import ProductPayload, Product
-from ordertype import Order
-from suppliertype import Supplier
 
 from flask import Request
 import datetime
@@ -40,16 +37,20 @@ def endpoint_order_get(
     user_jwt: Jwt | None,
 ) -> ApiResponse[ApiData[Orders] | JwtFailure | DbFailure]:
     """
-    Returns a response to a hello world request.
+    Handles the endpoint for fetching the user's orders.
+
+    Args:
+        user_jwt: The user's JWT.
 
     Returns:
-        A response to the hello world request.
+        The user's orders.
     """
+
     if not user_jwt:
         return jwt_failure()
 
     try:
-        orders = __fetchOrdersQuery(user_jwt.username)
+        orders = fetchOrdersQuery(user_jwt.username)
         return ApiResponse(
             response=ApiData(data=Orders(orders=orders)),
             statusCode=200,
@@ -92,15 +93,15 @@ def endpoint_order_patch(
     try:
         next(
             order
-            for order in __fetchOrdersQuery(user_jwt.username)
+            for order in fetchOrdersQuery(user_jwt.username)
             if order.order_id == requestJson["order_id"]
         )
 
-        __updateOrderStatusQuery(requestJson["order_id"], requestJson["order_status"])
+        updateOrderStatusQuery(requestJson["order_id"], requestJson["order_status"])
 
         updatedOrder = next(
             order
-            for order in __fetchOrdersQuery(user_jwt.username)
+            for order in fetchOrdersQuery(user_jwt.username)
             if order.order_id == requestJson["order_id"]
         )
 
@@ -113,24 +114,6 @@ def endpoint_order_patch(
         return request_failure("User order not found")
     except Exception as e:
         return db_failure(e)
-
-
-def __updateOrderStatusQuery(order_id: int, order_status: str) -> None:
-    """
-    Updates the status of an order.
-
-    Args:
-        order_id: The id of the order.
-        order_status: The new status of the order.
-    """
-    updateOrderQuery = [
-        (
-            ('UPDATE "Order" SET order_status = %s WHERE order_id = %s'),
-            (order_status, order_id),
-        )
-    ]
-
-    connExecute(updateOrderQuery)
 
 
 def endpoint_order_post(
@@ -183,11 +166,11 @@ def endpoint_order_post(
         return request_failure("Invalid request body")
 
     try:
-        new_order_id = __createOrderQuery(user_jwt.username, requestJson["products"])
+        new_order_id = createOrderQuery(user_jwt.username, requestJson["products"])
 
         createdOrder = next(
             order
-            for order in __fetchOrdersQuery(user_jwt.username)
+            for order in fetchOrdersQuery(user_jwt.username)
             if order.order_id == new_order_id
         )
 
@@ -200,7 +183,7 @@ def endpoint_order_post(
         return db_failure(e)
 
 
-def __createOrderQuery(username: str, prod_id_qty_pairs: List[Dict[str, int]]) -> int:
+def createOrderQuery(username: str, prod_id_qty_pairs: List[Dict[str, int]]) -> int:
     """
     Performs the database query for creating an order.
 
@@ -237,7 +220,7 @@ def __createOrderQuery(username: str, prod_id_qty_pairs: List[Dict[str, int]]) -
     return order_id
 
 
-def __fetchOrdersQuery(username: str) -> List[Order]:
+def fetchOrdersQuery(username: str) -> List[Order]:
     """
     Performs the database query for user orders.
 
@@ -288,3 +271,21 @@ def __fetchOrdersQuery(username: str) -> List[Order]:
         )
 
     return list(orderDict.values())
+
+
+def updateOrderStatusQuery(order_id: int, order_status: str) -> None:
+    """
+    Updates the status of an order.
+
+    Args:
+        order_id: The id of the order.
+        order_status: The new status of the order.
+    """
+    updateOrderQuery = [
+        (
+            ('UPDATE "Order" SET order_status = %s WHERE order_id = %s'),
+            (order_status, order_id),
+        )
+    ]
+
+    connExecute(updateOrderQuery)
