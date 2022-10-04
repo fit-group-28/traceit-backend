@@ -18,16 +18,19 @@ import datetime
 
 @dataclass
 class Supplier(DataClassJsonMixin):
-    """
-    A class representing the data of a response to a user details request.
-    """
-
     uid: str
     username: str
     number: int
     longitude: float
     latitude: float
     address: str
+@dataclass
+class Suppliers(DataClassJsonMixin):
+    """
+    A class representing the data of a response to a user details request.
+    """
+    suppliers: list[Supplier]
+
 
 
 def endpoint_supplier_get(
@@ -49,14 +52,7 @@ def endpoint_supplier_get(
         requestJson = request.get_json()
         supplier = get_supplier(requestJson.get("supplier_id", None))
         apiResponse = ApiResponse(
-            response=Supplier(
-                uid=supplier["supplier_id"],
-                username=supplier["name"].strip(),
-                longitude=supplier["longitude"],
-                latitude=supplier["latitude"],
-                number=supplier["phone_number"],
-                address=supplier["address"],
-            ),
+            response=Suppliers(suppliers=supplier),
             statusCode=200,
         )
     except Exception as e:
@@ -65,32 +61,34 @@ def endpoint_supplier_get(
     return apiResponse
 
 
-def get_supplier(id: str) -> Supplier:
+def get_supplier(id: str) -> list[Supplier]:
     """
     Get the supplier details for a user.
     """
     supplier = connQuery(
         [
             (
-                'SELECT supplier_id, name, longitude, latitude, phone_number, address FROM "Supplier" WHERE supplier_id = %s',
-                (id,),
+                'SELECT supplier_id, name, longitude, latitude, phone_number, address FROM "Supplier"',
             )
         ]
     )
 
+    res = []
     if not supplier[0]:
         return None
-    supplier = supplier[0][0]
-    supplierDist = {}
-    supplierDist = {
-        "supplier_id": supplier[0],
-        "name": supplier[1],
-        "longitude": supplier[2],
-        "latitude": supplier[3],
-        "phone_number": supplier[4],
-        "address": supplier[5],
-    }
-    return supplierDist
+    supplier = supplier[0]
+
+    for row in supplier:
+        supplierDist = {
+            "supplier_id": row[0],
+            "name": row[1],
+            "longitude": row[2],
+            "latitude": row[3],
+            "phone_number": row[4],
+            "address": row[5],
+        }
+        res.append(supplierDist)
+    return res
 
 
 def endpoint_supplier_product_get(user_jwt: Jwt | None) -> ApiResponse[Supplier]:
