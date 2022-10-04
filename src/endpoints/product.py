@@ -4,21 +4,13 @@ from dataclasses_json import DataClassJsonMixin
 from apidata import (
     ApiData,
     ApiResponse,
-    RequestFailure,
-    jwt_failure,
     db_failure,
-    JwtFailure,
     DbFailure,
-    request_failure,
 )
-from userjwt import Jwt
-from dbconnector import connQuery, make_connection, connExecute
-from schematypes import Order, ProductExtended, ProductPayload, Product, Supplier
+from dbconnector import connQuery
+from schematypes import ProductExtended, Supplier
 
-from typing import List, Dict
-
-from flask import Request
-import datetime
+from typing import List
 
 
 @dataclass
