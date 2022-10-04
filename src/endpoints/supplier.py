@@ -31,7 +31,7 @@ class Supplier(DataClassJsonMixin):
 
 
 def endpoint_supplier_get(
-    user_jwt: Jwt | None, request: Request
+    user_jwt: Jwt | None
 ) -> ApiResponse[Supplier | JwtFailure | DbFailure]:
     """
     Handles the endpoint for getting supplier details.
@@ -46,8 +46,7 @@ def endpoint_supplier_get(
         return jwt_failure()
 
     try:
-        requestJson = request.get_json()
-        supplier = get_supplier(requestJson.get("supplier_id", None))
+        supplier = get_supplier()
         apiResponse = ApiResponse(
             response=Supplier(
                 uid=supplier["supplier_id"],
@@ -64,8 +63,7 @@ def endpoint_supplier_get(
 
     return apiResponse
 
-
-def get_supplier(id: str) -> Supplier:
+def get_supplier() -> list[Supplier]:
     """
     Get the supplier details for a user.
     """
