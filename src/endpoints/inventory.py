@@ -12,16 +12,15 @@ from apidata import (
     request_failure,
 )
 from userjwt import Jwt
-from dbconnector import connQuery, make_connection, connExecute
+from dbconnector import connQuery, connExecute
 from schematypes import Order, ProductPayload, Product, Supplier, sumProductPayloads
 
 from typing import Iterable, List, Dict
 from operator import eq, attrgetter
 from functools import reduce
-from funcy import compose, curry, partial
+from funcy import compose, partial
 
 from flask import Request
-import datetime
 from endpoints.order import fetchOrdersQuery
 
 
@@ -71,7 +70,7 @@ def endpoint_inventory_patch(
     request: Request,
 ) -> ApiResponse[ApiData[Inventory] | JwtFailure | DbFailure | RequestFailure]:
     """
-    Handles requests to update the user's current inventory.
+    Handles requests to update the user's current inventory. Updates the offset such that the new total inventory is equal to the target quantity.
 
     Format is:
 
@@ -80,14 +79,12 @@ def endpoint_inventory_patch(
             "quantity": 10
         }
 
-
     Args:
         user_jwt: The user's JWT.
         request: The request object.
 
     Returns:
         The user's inventory.
-
     """
     if not user_jwt:
         return jwt_failure()
@@ -168,7 +165,10 @@ def updateInventoryQuery(
                 (
                     'INSERT INTO "UserProductOffset" (user_id, product_id, quantity, subtotal) '
                     'VALUES ((SELECT id FROM "User" WHERE username = %s), %s, %s, %s) '
-                    'ON CONFLICT (user_id, product_id) DO UPDATE SET quantity = %s WHERE "UserProductOffset".user_id = (SELECT id FROM "User" WHERE username = %s) AND "UserProductOffset".product_id = %s'
+                    "ON CONFLICT (user_id, product_id) DO "
+                    "UPDATE SET quantity = %s "
+                    'WHERE "UserProductOffset".user_id = (SELECT id FROM "User" WHERE username = %s) '
+                    'AND "UserProductOffset".product_id = %s'
                 ),
                 (
                     username,
