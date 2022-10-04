@@ -66,6 +66,152 @@ def endpoint_inventory_get(
         return db_failure(e)
 
 
+def endpoint_inventory_patch(
+    user_jwt: Jwt | None,
+    request: Request,
+) -> ApiResponse[ApiData[Inventory] | JwtFailure | DbFailure | RequestFailure]:
+    """
+    Handles requests to update the user's current inventory.
+
+    Format is:
+
+        {
+            "product_id": 123,
+            "quantity": 10
+        }
+
+
+    Args:
+        user_jwt: The user's JWT.
+        request: The request object.
+
+    Returns:
+        The user's inventory.
+
+    """
+    if not user_jwt:
+        return jwt_failure()
+
+    requestJson = request.json
+
+    # check body right format
+    if (
+        not isinstance(requestJson, dict)
+        or not isinstance(requestJson.get("product_id", None), int)
+        or not isinstance(requestJson.get("quantity", None), int)
+        or requestJson["quantity"] < 0
+    ):
+        return request_failure("Invalid request body")
+
+    try:
+        inventory = updateInventoryQuery(
+            user_jwt.username, requestJson["product_id"], requestJson["quantity"]
+        )
+
+        return ApiResponse(
+            response=ApiData(data=Inventory(inventory=inventory)),
+            statusCode=200,
+        )
+
+    except Exception as e:
+        return db_failure(e)
+
+
+def updateInventoryQuery(
+    username: str, product_id: int, targetQuantity: int
+) -> List[ProductPayload]:
+    """
+    Updates the user's current inventory.
+
+    Args:
+        username: The user's username.
+        product_id: The product ID.
+        quantity: The quantity of the product.
+
+    Returns:
+        The user's inventory.
+
+    """
+    inventory = getInventoryQuery(username)
+    currentInvQuantity = (
+        relevantProductPayload[0].quantity
+        if (
+            relevantProductPayload := list(
+                filter(
+                    lambda ppayload: ppayload.product.product_id == product_id,
+                    inventory,
+                )
+            )
+        )
+        else 0
+    )
+
+    if targetQuantity != currentInvQuantity:
+        offsets = getProductOffsets(username)
+        currentOffsetQuantity = (
+            relevantProductPayload[0].quantity
+            if (
+                relevantProductPayload := list(
+                    filter(
+                        lambda ppayload: ppayload.product.product_id == product_id,
+                        offsets,
+                    )
+                )
+            )
+            else 0
+        )
+
+        newOffsetQuantity = currentOffsetQuantity + targetQuantity - currentInvQuantity
+
+        query = [
+            (
+                (
+                    'INSERT INTO "UserProductOffset" (user_id, product_id, quantity, subtotal) '
+                    'VALUES ((SELECT id FROM "User" WHERE username = %s), %s, %s, %s) '
+                    'ON CONFLICT (user_id, product_id) DO UPDATE SET quantity = %s WHERE "UserProductOffset".user_id = (SELECT id FROM "User" WHERE username = %s) AND "UserProductOffset".product_id = %s'
+                ),
+                (
+                    username,
+                    product_id,
+                    newOffsetQuantity,
+                    0,
+                    newOffsetQuantity,
+                    username,
+                    product_id,
+                ),
+            )
+        ]
+
+        connExecute(query)
+
+    return getInventoryQuery(username)
+
+
+def updateProductOffsetQuery(username: str, product_id: int, quantity: int) -> None:
+    """
+    Updates the user's base inventory offset.
+
+    Args:
+        username: The user's username.
+        product_id: The product ID.
+        quantity: The quantity of the product.
+
+    Returns:
+        None
+    """
+
+    query = [
+        (
+            (
+                'UPDATE "UserProductOffset" SET quantity = %s WHERE user_id = (SELECT id FROM "User" WHERE username = %s) AND product_id = %s'
+            ),
+            (quantity, username, product_id),
+        )
+    ]
+
+    connExecute(query)
+
+
 def getInventoryQuery(username: str) -> List[ProductPayload]:
     """
     Gets the user's current inventory.
