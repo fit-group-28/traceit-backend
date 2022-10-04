@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from unicodedata import name
 from dataclasses_json import DataClassJsonMixin
 
 from apidata import (
@@ -73,20 +74,26 @@ def endpoint_supplier_get(user_jwt: Jwt | None, request: Request) -> ApiResponse
 
     return apiResponse
 
-def get_supplier(user_id: str) -> Supplier:
+def get_supplier(id: str) -> Supplier:
     """
     Get the supplier details for a user.
     """
     supplier = connQuery(
-        "SELECT * FROM supplier WHERE user_id = %s", (user_id,)
-    ).fetchone()
-    return Supplier(
-        supplier_id=supplier.supplier_id,
-        name=supplier.name,
-        longitude=supplier.longitude,
-        latitude=supplier.latitude,
-        number=supplier.phone_number,
+        [('SELECT supplier_id, name, longitude, latitude, phone_number FROM "Supplier" WHERE supplier_id = %s', (id,))]
     )
+
+    if not supplier:
+        return None
+        
+    supplierDict = {}
+    for row in supplier:
+        supplierId = row[0]
+        name = row[1]
+        longitude = row[2]
+        latitude = row[3]
+        phone_number = row[4]
+
+    return list(supplierDict.values())
 
 def endpoint_supplier_product_get(user_jwt: Jwt | None) -> ApiResponse[Supplier]:
     """
@@ -131,18 +138,3 @@ def get_supplier_product(user_id: str) -> Supplier:
         supplier_id=supplier.supplier_id,
         name=supplier.name,
     )
-
-def __fetchSupplierQuery(username: str) -> Supplier:
-    """
-    Fetches the user's orders from the database.
-
-    Args:
-        username: The username of the user.
-
-    Returns:
-        The user's orders.
-    """
-    query = """
-        SELECT * FROM supplier WHERE supplier_id = %s
-    """
-    return connQuery(query, (username,)).fetchone()
