@@ -69,13 +69,3 @@ INSERT INTO public."Product" (
         supplier_id
     )
 VALUES (3, 'Rice', 20, '20kg Rice', 2);
-INSERT INTO public."Order" (order_id, user_id, order_status, date_placed)
-VALUES (1, '1', 'placed', '2020-01-01');
-INSERT INTO public."Orderline" (order_id, product_id, quantity, subtotal)
-VALUES (1, 1, 1, 4);
-INSERT INTO public."Orderline" (order_id, product_id, quantity, subtotal)
-VALUES (1, 2, 2, 10);
-INSERT INTO public."Order" (order_id, user_id, order_status, date_placed)
-VALUES (2, '1', 'transit', '2020-01-02');
-INSERT INTO public."Orderline" (order_id, product_id, quantity, subtotal)
-VALUES (2, 3, 10, 5);

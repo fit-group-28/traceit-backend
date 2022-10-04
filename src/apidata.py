@@ -39,6 +39,17 @@ class ApiData(DataClassJsonMixin, Generic[A]):
 
 
 @dataclass
+class RequestFailure(DataClassJsonMixin):
+    """
+    A class representing a request. Usually returned with a 400 status code.
+
+    Attributes:
+        msg: The message of the failure."""
+
+    msg: str
+
+
+@dataclass
 class JwtFailure(DataClassJsonMixin):
     """
     A class representing a JWT failure. Usually returned with a 401 status code.
@@ -69,6 +80,6 @@ class DbFailure(DataClassJsonMixin):
 
 def db_failure(e: Exception):
     return ApiResponse(
-        response=DbFailure(msg="Database query error: " + str(e)),
+        response=DbFailure(msg="Database query error: " + str(e).strip()),
         statusCode=500,
     )
