@@ -6,13 +6,16 @@ create table "User" (
 alter table "User" owner to postgres;
 create table if not exists "UserCredentials" (
     id char(50) not null constraint usercredentials_id references "User" on update cascade on delete cascade,
-    password char(128),
-    salt char(16)
+    password char(256),
+    salt char(32)
 );
 alter table "UserCredentials" owner to postgres;
 create table if not exists "Supplier" (
     supplier_id serial not null constraint supplier_pk primary key,
-    name char(64)
+    name char(64),
+    phone_number int,
+    longitude float,
+    latitude float
 );
 alter table "Supplier" owner to postgres;
 create table if not exists "Product" (
@@ -39,12 +42,31 @@ create table if not exists "Orderline" (
     PRIMARY KEY (order_id, product_id)
 );
 alter table "Orderline" owner to postgres;
+
+
+INSERT INTO public."Supplier" (
+    name, 
+    phone_number,
+    longitude,
+    latitude)
+VALUES ('One''s Grocery shop', 12345678, -37.9280453, 145.1182741);
+
+INSERT INTO public."Supplier" (
+    name, 
+    phone_number,
+    longitude,
+    latitude)
+VALUES ('Two Dollor Shop', 12345678, -37.9263162, 145.1193540);
+
+INSERT INTO public."Supplier" (
+    name, 
+    phone_number,
+    longitude,
+    latitude)
+VALUES ('Hongkong Supermarket', 12345678, -37.8665312, 145.0936994);
+
 INSERT INTO public."User" (id, username, email)
 VALUES ('1', 'admin', 'admin@localhost');
-INSERT INTO public."Supplier" (supplier_id, name)
-VALUES (1, 'One''s Grocery shop');
-INSERT INTO public."Supplier" (supplier_id, name)
-VALUES (2, 'HongKong Supermarket');
 INSERT INTO public."Product" (
         product_id,
         name,

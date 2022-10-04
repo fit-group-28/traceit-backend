@@ -12,6 +12,9 @@ from endpoints.order import (
     endpoint_order_post,
     endpoint_order_patch,
 )
+from endpoints.supplier import (
+    endpoint_supplier_get,
+)
 from endpoints.user_details import endpoint_user_details
 from endpoints.login import endpoint_login
 from userjwt import Jwt
@@ -52,7 +55,7 @@ def user_details():
 @jwt_required()
 def supplier_get():
     user_jwt = get_user_jwt()
-    return endpoint_supplier_get(user_jwt).response_tuple()
+    return endpoint_supplier_get(user_jwt, request).response_tuple()
 
 #supplier/products
 @app.route("/supplier/products", methods=["GET"])
@@ -60,7 +63,7 @@ def supplier_get():
 def supplier_products_get():
     user_jwt = get_user_jwt()
     return endpoint_supplier_products_get(user_jwt).response_tuple()
-    
+
 @app.route("/order", methods=["GET", "POST", "PATCH"])
 @jwt_required()
 def order():
