@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
 from endpoints.hello_world import endpoint_hello_world
+from endpoints.order import endpoint_order_get
 from endpoints.user_details import endpoint_user_details
 from endpoints.login import endpoint_login
 from userjwt import Jwt
@@ -24,6 +25,11 @@ def login():
     return endpoint_login(request).response_tuple()
 
 
+@app.route("/account/register", methods=["POST"])
+def register():
+    return endpoint_register(request).response_tuple()
+
+
 @app.route("/hello", methods=["GET"])
 @jwt_required(optional=True)
 def hello_world():
@@ -31,16 +37,18 @@ def hello_world():
     return endpoint_hello_world(user_jwt).response_tuple()
 
 
-@app.route("/account/register", methods=["POST"])
-def register():
-    return endpoint_register(request).response_tuple()
-
-
 @app.route("/user/details", methods=["GET"])
 @jwt_required()
 def user_details():
     user_jwt = get_user_jwt()
     return endpoint_user_details(user_jwt).response_tuple()
+
+
+@app.route("/order", methods=["GET", "POST", "PATCH"])
+@jwt_required()
+def order():
+    user_jwt = get_user_jwt()
+    return endpoint_order_get(user_jwt).response_tuple()
 
 
 # UTILS

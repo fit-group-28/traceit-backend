@@ -36,3 +36,39 @@ class ApiData(DataClassJsonMixin, Generic[A]):
         data: The data of the response."""
 
     data: A
+
+
+@dataclass
+class JwtFailure(DataClassJsonMixin):
+    """
+    A class representing a JWT failure. Usually returned with a 401 status code.
+
+    Attributes:
+        msg: The message of the failure."""
+
+    msg: str
+
+
+def jwt_failure():
+    return ApiResponse(
+        response=JwtFailure(msg="User not logged in"),
+        statusCode=401,
+    )
+
+
+@dataclass
+class DbFailure(DataClassJsonMixin):
+    """
+    A class representing a databse query error. Usually returned with a 500 status code.
+
+    Attributes:
+        msg: The message of the failure."""
+
+    msg: str
+
+
+def db_failure(e: Exception):
+    return ApiResponse(
+        response=DbFailure(msg="Database query error: " + str(e)),
+        statusCode=500,
+    )
