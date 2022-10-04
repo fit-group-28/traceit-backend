@@ -6,7 +6,11 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
 from endpoints.hello_world import endpoint_hello_world
-from endpoints.order import endpoint_order_get, endpoint_order_post
+from endpoints.order import (
+    endpoint_order_get,
+    endpoint_order_post,
+    endpoint_order_patch,
+)
 from endpoints.user_details import endpoint_user_details
 from endpoints.login import endpoint_login
 from userjwt import Jwt
@@ -53,6 +57,9 @@ def order():
     elif request.method == "POST":
         user_jwt = get_user_jwt()
         return endpoint_order_post(user_jwt, request).response_tuple()
+    elif request.method == "PATCH":
+        user_jwt = get_user_jwt()
+        return endpoint_order_patch(user_jwt, request).response_tuple()
 
 
 # UTILS

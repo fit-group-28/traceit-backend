@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from re import M
 from dataclasses_json import DataClassJsonMixin
 
 from apidata import (
@@ -9,9 +10,10 @@ from apidata import (
     db_failure,
     JwtFailure,
     DbFailure,
+    request_failure,
 )
 from userjwt import Jwt
-from dbconnector import connQuery, make_connection
+from dbconnector import connQuery, make_connection, connExecute
 from ordertype import Order
 
 from typing import List, Dict
@@ -48,7 +50,7 @@ def endpoint_order_get(
         return jwt_failure()
 
     try:
-        orders = fetchOrdersQuery(user_jwt.username)
+        orders = __fetchOrdersQuery(user_jwt.username)
         return ApiResponse(
             response=ApiData(data=Orders(orders=orders)),
             statusCode=200,
@@ -56,6 +58,80 @@ def endpoint_order_get(
 
     except Exception as e:
         return db_failure(e)
+
+
+def endpoint_order_patch(
+    user_jwt: Jwt | None, request: Request
+) -> ApiResponse[ApiData[Orders] | JwtFailure | DbFailure | RequestFailure]:
+    """
+    Handles the endpoint for updating the status of an order. Format is:
+
+        {
+            "order_id": 1,
+            "order_status": "cancelled"
+        }
+
+    Returns:
+        The updated order
+    """
+    if not user_jwt:
+        return jwt_failure()
+
+    requestJson = request.json
+
+    # check body right format
+    if (
+        not isinstance(requestJson, dict)
+        or not isinstance(requestJson.get("order_id", None), int)
+        or (
+            requestJson.get("order_status", None)
+            not in ["placed", "transit", "fulfilled", "cancelled"]
+        )
+    ):
+        return request_failure("Invalid request body")
+
+    try:
+        next(
+            order
+            for order in __fetchOrdersQuery(user_jwt.username)
+            if order.order_id == requestJson["order_id"]
+        )
+
+        __updateOrderStatusQuery(requestJson["order_id"], requestJson["order_status"])
+
+        updatedOrder = next(
+            order
+            for order in __fetchOrdersQuery(user_jwt.username)
+            if order.order_id == requestJson["order_id"]
+        )
+
+        return ApiResponse(
+            response=ApiData(data=Orders(orders=[updatedOrder])),
+            statusCode=200,
+        )
+
+    except StopIteration:
+        return request_failure("User order not found")
+    except Exception as e:
+        return db_failure(e)
+
+
+def __updateOrderStatusQuery(order_id: int, order_status: str) -> None:
+    """
+    Updates the status of an order.
+
+    Args:
+        order_id: The id of the order.
+        order_status: The new status of the order.
+    """
+    updateOrderQuery = [
+        (
+            ('UPDATE "Order" SET order_status = %s WHERE order_id = %s'),
+            (order_status, order_id),
+        )
+    ]
+
+    connExecute(updateOrderQuery)
 
 
 def endpoint_order_post(
@@ -82,15 +158,19 @@ def endpoint_order_post(
         user_jwt: The user's JWT.
         request: The request object.
 
-    """
-    requestJson = request.json
+    Returns:
+        The newly created order.
 
-    if not isinstance(requestJson, dict) or not user_jwt:
+    """
+    if not user_jwt:
         return jwt_failure()
+
+    requestJson = request.json
 
     # check body right format
     if (
-        not isinstance(requestJson.get("products", None), list)
+        not isinstance(requestJson, dict)
+        or not isinstance(requestJson.get("products", None), list)
         or not requestJson.get("products", None)
     ) or not all(
         (
@@ -101,17 +181,14 @@ def endpoint_order_post(
         )
         for product in requestJson["products"]
     ):
-        return ApiResponse(
-            response=RequestFailure(msg="Invalid request body"),
-            statusCode=400,
-        )
+        return request_failure("Invalid request body")
 
     try:
-        new_order_id = createOrderQuery(user_jwt.username, requestJson["products"])
+        new_order_id = __createOrderQuery(user_jwt.username, requestJson["products"])
 
         createdOrder = next(
             order
-            for order in fetchOrdersQuery(user_jwt.username)
+            for order in __fetchOrdersQuery(user_jwt.username)
             if order.order_id == new_order_id
         )
 
@@ -124,7 +201,7 @@ def endpoint_order_post(
         return db_failure(e)
 
 
-def createOrderQuery(username: str, prod_id_qty_pairs: List[Dict[str, int]]) -> int:
+def __createOrderQuery(username: str, prod_id_qty_pairs: List[Dict[str, int]]) -> int:
     """
     Performs the database query for creating an order.
 
@@ -161,7 +238,7 @@ def createOrderQuery(username: str, prod_id_qty_pairs: List[Dict[str, int]]) -> 
     return order_id
 
 
-def fetchOrdersQuery(username: str) -> List[Order]:
+def __fetchOrdersQuery(username: str) -> List[Order]:
     """
     Performs the database query for user orders.
 

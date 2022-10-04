@@ -49,6 +49,13 @@ class RequestFailure(DataClassJsonMixin):
     msg: str
 
 
+def request_failure(msg: str):
+    return ApiResponse(
+        response=RequestFailure(msg="Request failure: " + str(msg).strip()),
+        statusCode=400,
+    )
+
+
 @dataclass
 class JwtFailure(DataClassJsonMixin):
     """
