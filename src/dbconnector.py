@@ -2,7 +2,7 @@ import psycopg2
 from typing import Tuple, Iterable, List
 
 
-def __make_connection() -> psycopg2.extensions.connection:
+def make_connection() -> psycopg2.extensions.connection:
     """
     Make a connection to the database. Don't call this directly, instead use the provided functions.
     """
@@ -28,7 +28,7 @@ def connExecute(actions: Iterable[Tuple[str] | Tuple[str, Tuple]]) -> None:
     Raises:
         psycopg2.Error: If an error occurs during the database operation.
     """
-    conn = __make_connection()
+    conn = make_connection()
     cursor = conn.cursor()
 
     try:
@@ -55,12 +55,11 @@ def connQuery(queries: Iterable[Tuple[str] | Tuple[str, Tuple]]) -> List[Tuple]:
 
     Raises:
         psycopg2.Error: If an error occurs during the database operation."""
-    conn = __make_connection()
+    conn = make_connection()
     cursor = conn.cursor()
 
     results = []
 
-    print(queries)
     try:
         for query in queries:
             cursor.execute(*query)

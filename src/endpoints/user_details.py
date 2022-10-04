@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 
-from apidata import ApiData, ApiResponse
+from apidata import ApiData, ApiResponse, JwtFailure, DbFailure, jwt_failure, db_failure
 from userjwt import Jwt
 from dbconnector import connQuery
+
+from typing import Tuple
 
 
 @dataclass
@@ -22,14 +24,9 @@ class UserDetails(DataClassJsonMixin):
     email: str
 
 
-@dataclass
-class UserDetailsFailure(DataClassJsonMixin):
-    msg: str
-
-
 def endpoint_user_details(
     user_jwt: Jwt | None,
-) -> ApiResponse[ApiData[UserDetails] | UserDetailsFailure]:
+) -> ApiResponse[ApiData[UserDetails] | JwtFailure | DbFailure]:
     """
     Returns a response to a hello world request.
 
@@ -37,40 +34,40 @@ def endpoint_user_details(
         A response to the hello world request.
     """
     if not user_jwt:
-        apiResponse = ApiResponse(
-            response=UserDetailsFailure(msg="User not logged in"),
-            statusCode=401,
+        return jwt_failure()
+
+    try:
+        uid, username, email = userDetailsQuery(user_jwt.username)
+        return ApiResponse(
+            response=ApiData(
+                data=UserDetails(
+                    uid=uid,
+                    username=username,
+                    email=email,
+                )
+            ),
+            statusCode=200,
         )
-    else:
 
-        try:
-            fetchUser = connQuery(
-                [
-                    (
-                        'SELECT id, username, email FROM "User" WHERE username = %s',
-                        (user_jwt.username,),
-                    )
-                ]
-            )
+    except Exception as e:
+        return db_failure(e)
 
-            uid, username, email = fetchUser[0][0]
-            uid, username, email = uid.strip(), username.strip(), email.strip()
 
-            apiResponse = ApiResponse(
-                response=ApiData(
-                    data=UserDetails(
-                        uid=uid,
-                        username=username,
-                        email=email,
-                    )
-                ),
-                statusCode=200,
-            )
+def userDetailsQuery(username: str) -> Tuple[str, str, str]:
+    """
+    Performs the database query for user details.
 
-        except Exception as e:
-            apiResponse = ApiResponse(
-                response=UserDetailsFailure(msg="Database error"),
-                statusCode=500,
-            )
+    Returns:
+        A response to the hello world request.
+    """
 
-    return apiResponse
+    getUserDetailsQuery = [
+        (
+            'SELECT id, username, email FROM "User" WHERE username = %s',
+            (username,),
+        )
+    ]
+    fetchUser = connQuery(getUserDetailsQuery)
+
+    uid, username, email = fetchUser[0][0]
+    return uid.strip(), username.strip(), email.strip()
