@@ -19,6 +19,15 @@ class Product(DataClassJsonMixin):
 
 
 @dataclass
+class ProductExtended(DataClassJsonMixin):
+    product_id: int
+    name: str
+    price: str
+    description: str
+    supplier: Supplier
+
+
+@dataclass
 class ProductPayload(DataClassJsonMixin):
     product: Product
     quantity: int

@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_jwt_extended import get_jwt_identity, jwt_required, JWTManager
 
 from endpoints.hello_world import endpoint_hello_world
+from endpoints.product import endpoint_product_get
 from endpoints.user_regist import endpoint_register
 from endpoints.inventory import endpoint_inventory_get, endpoint_inventory_patch
 from endpoints.order import (
@@ -70,6 +71,12 @@ def inventory():
     elif request.method == "PATCH":
         user_jwt = get_user_jwt()
         return endpoint_inventory_patch(user_jwt, request).response_tuple()
+
+
+@app.route("/product", methods=["GET"])
+@jwt_required()
+def product():
+    return endpoint_product_get().response_tuple()
 
 
 # UTILS
