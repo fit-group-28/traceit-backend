@@ -12,7 +12,7 @@ from apidata import (
 )
 from userjwt import Jwt
 from dbconnector import connQuery
-from flask import Request
+from flask.wrappers import Request
 import datetime
 
 
@@ -24,17 +24,19 @@ class Supplier(DataClassJsonMixin):
     longitude: float
     latitude: float
     address: str
+
+
 @dataclass
 class Suppliers(DataClassJsonMixin):
     """
     A class representing the data of a response to a user details request.
     """
+
     suppliers: list[Supplier]
 
 
-
 def endpoint_supplier_get(
-    user_jwt: Jwt | None
+    user_jwt: Jwt | None,
 ) -> ApiResponse[Supplier | JwtFailure | DbFailure]:
     """
     Handles the endpoint for getting supplier details.
@@ -87,7 +89,7 @@ def get_supplier() -> list[Supplier]:
             "address": row[5],
         }
         res.append(supplierDist)
-    return res 
+    return res
 
 
 def endpoint_supplier_product_get(user_jwt: Jwt | None) -> ApiResponse[Supplier]:

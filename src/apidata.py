@@ -3,7 +3,7 @@ from dataclasses_json import DataClassJsonMixin
 from typing import TypeVar, Generic, Tuple, Dict, Any
 
 
-A = TypeVar("A", bound=DataClassJsonMixin)
+A = TypeVar("A", bound=DataClassJsonMixin, covariant=True)
 
 
 @dataclass

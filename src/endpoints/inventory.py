@@ -20,7 +20,7 @@ from operator import eq, attrgetter
 from functools import reduce
 from funcy import compose, partial
 
-from flask import Request
+from flask.wrappers import Request
 from endpoints.order import fetchOrdersQuery
 
 
@@ -238,7 +238,7 @@ def getInventoryQuery(username: str) -> List[ProductPayload]:
 
     offset_payloads = getProductOffsets(username)
 
-    total_payloads: Dict[str, ProductPayload] = {}
+    total_payloads: Dict[int, ProductPayload] = {}
     for payload in list(fulfilled_order_payloads) + offset_payloads:
         total_payloads[payload.product.product_id] = sumProductPayloads(
             payload, total_payloads.get(payload.product.product_id)

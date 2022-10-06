@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 import time
 
-from flask import Request
+from flask.wrappers import Request
 from flask_jwt_extended import create_access_token
 from argon2 import PasswordHasher
 
@@ -37,9 +37,14 @@ def endpoint_login(request: Request) -> ApiResponse[Login]:
     """
     requestJson = request.json
 
-    if isinstance(requestJson, dict) and validate_password(
-        (username := requestJson.get("username", None)),
-        requestJson.get("password", None),
+    if (
+        isinstance(requestJson, dict)
+        and "username" in requestJson
+        and "password" in requestJson
+        and validate_password(
+            (username := requestJson["username"]),
+            requestJson["password"],
+        )
     ):
         access_token = create_access_token(
             identity=Jwt(username=username, time_issued=int(time.time())).to_dict()

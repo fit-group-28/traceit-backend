@@ -3,8 +3,8 @@ import random
 import re
 from uuid import uuid4
 from dataclasses_json import DataClassJsonMixin
-from dbconnector import connExecute, connQuery
-from flask import Request
+from dbconnector import connExecute
+from flask.wrappers import Request
 from apidata import ApiResponse
 from argon2 import PasswordHasher
 
@@ -33,10 +33,16 @@ def endpoint_register(request: Request) -> ApiResponse[Register]:
     """
     requestJson = request.json
 
-    if isinstance(requestJson, dict) and validate(
-        (username := requestJson.get("username", None)),
-        password := requestJson.get("password", None),
-        email := requestJson.get("email", None),
+    if (
+        isinstance(requestJson, dict)
+        and "username" in requestJson
+        and "password" in requestJson
+        and "email" in requestJson
+        and validate(
+            (username := requestJson["username"]),
+            password := requestJson["password"],
+            email := requestJson["email"],
+        )
     ):
         try:
             create_user(username, password, email)

@@ -1,8 +1,9 @@
 import psycopg2
+from psycopg2.extensions import connection
 from typing import Tuple, Iterable, List
 
 
-def make_connection() -> psycopg2.extensions.connection:
+def make_connection() -> connection:
     """
     Make a connection to the database. Don't call this directly, instead use the provided functions.
     """
@@ -33,7 +34,11 @@ def connExecute(actions: Iterable[Tuple[str] | Tuple[str, Tuple]]) -> None:
 
     try:
         for action in actions:
-            cursor.execute(*action)
+            first, rest = action[0], action[1:]
+            if rest:
+                cursor.execute(first, *rest)
+            else:
+                cursor.execute(first)
         conn.commit()
         conn.close()
 
@@ -62,7 +67,11 @@ def connQuery(queries: Iterable[Tuple[str] | Tuple[str, Tuple]]) -> List[Tuple]:
 
     try:
         for query in queries:
-            cursor.execute(*query)
+            first, rest = query[0], query[1:]
+            if rest:
+                cursor.execute(first, *rest)
+            else:
+                cursor.execute(first)
             results.append(cursor.fetchall())
         conn.close()
 

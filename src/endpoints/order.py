@@ -17,7 +17,7 @@ from schematypes import Order, ProductPayload, Product, Supplier
 
 from typing import List, Dict
 
-from flask import Request
+from flask.wrappers import Request
 import datetime
 
 
@@ -118,7 +118,7 @@ def endpoint_order_patch(
 
 def endpoint_order_post(
     user_jwt: Jwt | None, request: Request
-) -> ApiResponse[ApiData[Order] | JwtFailure | DbFailure | RequestFailure]:
+) -> ApiResponse[ApiData[Orders] | JwtFailure | DbFailure | RequestFailure]:
 
     """
     Handles the endpoint for creating an order. Format is:
@@ -159,7 +159,7 @@ def endpoint_order_post(
             isinstance(product, dict)
             and isinstance(product.get("product_id", None), int)
             and isinstance(product.get("quantity", None), int)
-            and product.get("quantity", None) > 0
+            and product["quantity"] > 0
         )
         for product in requestJson["products"]
     ):
@@ -201,7 +201,7 @@ def createOrderQuery(username: str, prod_id_qty_pairs: List[Dict[str, int]]) -> 
                 ),
                 (username, "placed", datetime.datetime.now()),
             )
-            order_id = cursor.fetchone()[0]
+            order_id = (cursor.fetchone() or [])[0]
 
             for prod_id_qty_pair in prod_id_qty_pairs:
                 cursor.execute(
