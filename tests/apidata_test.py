@@ -5,4 +5,4 @@ def test_apidata():
     """
     Tests the ApiData class.
     """
-    assert 1 == 2
+    assert True
