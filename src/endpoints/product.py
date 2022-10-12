@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 
-from apidata import (
+from src.apidata import (
     ApiData,
     ApiResponse,
     db_failure,
     DbFailure,
 )
-from dbconnector import connQuery
-from schematypes import ProductExtended, Supplier
+from src.dbconnector import connQuery
+from src.schematypes import ProductExtended, Supplier
 
 from typing import List
 

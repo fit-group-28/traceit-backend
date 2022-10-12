@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 
-from apidata import (
+from src.apidata import (
     ApiData,
     ApiResponse,
     jwt_failure,
@@ -10,8 +10,8 @@ from apidata import (
     DbFailure,
     request_failure,
 )
-from userjwt import Jwt
-from dbconnector import connQuery
+from src.userjwt import Jwt
+from src.dbconnector import connQuery
 from flask.wrappers import Request
 import datetime
 

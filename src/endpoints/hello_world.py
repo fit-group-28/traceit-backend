@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 
-from apidata import ApiData, ApiResponse
-from userjwt import Jwt
+from src.apidata import ApiData, ApiResponse
+from src.userjwt import Jwt
 
 
 @dataclass

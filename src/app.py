@@ -1,23 +1,23 @@
 from flask import Flask, request
 from flask_jwt_extended import get_jwt_identity, jwt_required, JWTManager
 
-from endpoints.hello_world import endpoint_hello_world
-from endpoints.product import endpoint_product_get
-from endpoints.user_regist import endpoint_register
-from endpoints.inventory import endpoint_inventory_get, endpoint_inventory_patch
-from endpoints.order import (
+from src.endpoints.hello_world import endpoint_hello_world
+from src.endpoints.product import endpoint_product_get
+from src.endpoints.user_regist import endpoint_register
+from src.endpoints.inventory import endpoint_inventory_get, endpoint_inventory_patch
+from src.endpoints.order import (
     endpoint_order_get,
     endpoint_order_post,
     endpoint_order_patch,
 )
-from endpoints.supplier import (
+from src.endpoints.supplier import (
     endpoint_supplier_get,
     endpoint_supplier_product_get,
 )
-from endpoints.user_details import endpoint_user_details
-from endpoints.login import endpoint_login
+from src.endpoints.user_details import endpoint_user_details
+from src.endpoints.login import endpoint_login
 
-from userjwt import Jwt
+from src.userjwt import Jwt
 
 
 app = Flask(__name__)

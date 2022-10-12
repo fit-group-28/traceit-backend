@@ -1,9 +1,16 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 
-from apidata import ApiData, ApiResponse, JwtFailure, DbFailure, jwt_failure, db_failure
-from userjwt import Jwt
-from dbconnector import connQuery
+from src.apidata import (
+    ApiData,
+    ApiResponse,
+    JwtFailure,
+    DbFailure,
+    jwt_failure,
+    db_failure,
+)
+from src.userjwt import Jwt
+from src.dbconnector import connQuery
 
 from typing import Tuple
 

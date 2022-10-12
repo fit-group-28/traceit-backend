@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 
-from apidata import (
+from src.apidata import (
     ApiData,
     ApiResponse,
     RequestFailure,
@@ -11,9 +11,9 @@ from apidata import (
     DbFailure,
     request_failure,
 )
-from userjwt import Jwt
-from dbconnector import connQuery, connExecute
-from schematypes import Order, ProductPayload, Product, Supplier, sumProductPayloads
+from src.userjwt import Jwt
+from src.dbconnector import connQuery, connExecute
+from src.schematypes import Order, ProductPayload, Product, Supplier, sumProductPayloads
 
 from typing import Iterable, List, Dict
 from operator import eq, attrgetter
@@ -21,7 +21,7 @@ from functools import reduce
 from funcy import compose, partial
 
 from flask.wrappers import Request
-from endpoints.order import fetchOrdersQuery
+from src.endpoints.order import fetchOrdersQuery
 
 
 @dataclass
@@ -230,7 +230,7 @@ def getInventoryQuery(username: str) -> List[ProductPayload]:
         compose(partial(eq, "fulfilled"), attrgetter("order_status")),
         orders,
     )
-    fulfilled_order_payloads: Iterable[ProductPayload] = reduce(
+    fulfilled_order_payloads: List[ProductPayload] = reduce(
         lambda acc, order: acc + order.products,
         fulfilled_orders,
         [],
@@ -239,7 +239,7 @@ def getInventoryQuery(username: str) -> List[ProductPayload]:
     offset_payloads = getProductOffsets(username)
 
     total_payloads: Dict[int, ProductPayload] = {}
-    for payload in list(fulfilled_order_payloads) + offset_payloads:
+    for payload in fulfilled_order_payloads + offset_payloads:
         total_payloads[payload.product.product_id] = sumProductPayloads(
             payload, total_payloads.get(payload.product.product_id)
         )
