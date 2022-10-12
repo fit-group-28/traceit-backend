@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_jwt_extended import get_jwt_identity, jwt_required, JWTManager
+from flask_jwt_extended import jwt_required, JWTManager
 
 from src.endpoints.hello_world import endpoint_hello_world
 from src.endpoints.product import endpoint_product_get
@@ -17,7 +17,7 @@ from src.endpoints.supplier import (
 from src.endpoints.user_details import endpoint_user_details
 from src.endpoints.login import endpoint_login
 
-from src.userjwt import Jwt
+from src.userjwt import get_user_jwt
 
 
 app = Flask(__name__)
@@ -96,24 +96,6 @@ def inventory():
 @jwt_required()
 def product():
     return endpoint_product_get().response_tuple()
-
-
-# UTILS
-def get_user_jwt() -> Jwt | None:
-    """
-    Get the user's JWT.
-
-    Returns:
-        The user's JWT if it exists, None otherwise.
-    """
-    try:
-        return (
-            Jwt.from_dict(user_identity)
-            if (user_identity := get_jwt_identity())
-            else None
-        )
-    except Exception:
-        return None
 
 
 if __name__ == "__main__":
