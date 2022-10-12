@@ -55,11 +55,11 @@ def test_fullOrderWorkflow():
     updateOrderStatusQuery(orders[0].order_id, "cancelled")
 
     # fetch order and check status has been updated
-    orders = fetchOrdersQuery("order_user")
-    assert len(orders) == 2
+    ordersUpdated = fetchOrdersQuery("order_user")
+    assert len(ordersUpdated) == 2
     assert (
         next(
-            filter(lambda order: order.order_id == orders[0].order_id, orders)
+            filter(lambda order: order.order_id == orders[0].order_id, ordersUpdated)
         ).order_status
         == "cancelled"
     )
