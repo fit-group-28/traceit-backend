@@ -7,7 +7,6 @@ from src.endpoints.user_regist import create_user
 from tests.helper import delete_user
 import pytest
 from src.dbconnector import connExecute
-from src.schematypes import Product, ProductPayload
 
 
 def test_fullOrderWorkflow():
