@@ -11,12 +11,11 @@ To run the server, run
 from the terminal. The server should be exposed at `localhost:3000`.
 
 # Test
-
 To run tests, use
 `pipenv run pytest`
 
-# Coverage Report
-`pipenv run coverage run -m pytest && pipenv run coverage report`
+# Test with Coverage Report
+`pipenv run pytest --cov=src tests`
 
 # Conventions
 
