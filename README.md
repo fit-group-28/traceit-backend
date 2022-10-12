@@ -15,6 +15,9 @@ from the terminal. The server should be exposed at `localhost:3000`.
 To run tests, use
 `pipenv run pytest`
 
+# Coverage Report
+`pipenv run coverage run -m pytest && pipenv run coverage report`
+
 # Conventions
 
 1. Place endpoints handler functions within their own file in the src/endpoints directory.

@@ -9,3 +9,4 @@ db/postgres-data
 __pycache__
 .mypy_cache
 */scratchpad.py
+.coverage
