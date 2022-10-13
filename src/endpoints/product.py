@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 
-from apidata import (
+from src.apidata import (
     ApiData,
     ApiResponse,
     db_failure,
     DbFailure,
 )
-from dbconnector import connQuery
-from schematypes import ProductExtended, Supplier
+from src.dbconnector import connQuery
+from src.schematypes import ProductExtended, Supplier
 
 from typing import List
 
@@ -16,10 +16,10 @@ from typing import List
 @dataclass
 class Products(DataClassJsonMixin):
     """
-    A class representing the user's orders.
+    A class representing products.
 
     Attributes:
-        orders: The user's orders.
+        products: The products.
     """
 
     products: List[ProductExtended]
@@ -40,10 +40,10 @@ def endpoint_product_get() -> ApiResponse[ApiData[Products] | DbFailure]:
 
 def fetchProductsQuery() -> List[ProductExtended]:
     """
-    Performs the database query for user orders.
+    Fetches all products.
 
-    Returns:
-        The user's orders.
+        Returns:
+            The products.
     """
 
     getProductsQuery = [

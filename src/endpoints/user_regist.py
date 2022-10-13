@@ -3,9 +3,9 @@ import random
 import re
 from uuid import uuid4
 from dataclasses_json import DataClassJsonMixin
-from dbconnector import connExecute
+from src.dbconnector import connExecute
 from flask.wrappers import Request
-from apidata import ApiResponse
+from src.apidata import ApiResponse
 from argon2 import PasswordHasher
 
 

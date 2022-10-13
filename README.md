@@ -10,6 +10,13 @@ To run the server, run
 `FLASK_DEBUG=true pipenv run flask --app src/app.py run --port 3000`
 from the terminal. The server should be exposed at `localhost:3000`.
 
+# Test
+To run tests, use
+`pipenv run pytest`
+
+# Test with Coverage Report
+`pipenv run pytest --cov=src tests`
+
 # Conventions
 
 1. Place endpoints handler functions within their own file in the src/endpoints directory.

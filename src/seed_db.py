@@ -1,6 +1,6 @@
 import random
-from endpoints.user_regist import create_user
-from endpoints.order import createOrderQuery, updateOrderStatusQuery
+from src.endpoints.user_regist import create_user
+from src.endpoints.order import createOrderQuery, updateOrderStatusQuery
 
 
 if __name__ == "__main__":

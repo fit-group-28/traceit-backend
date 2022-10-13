@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from dataclasses_json import DataClassJsonMixin
 
-from apidata import (
+from src.apidata import (
     ApiData,
     ApiResponse,
     RequestFailure,
@@ -11,9 +11,9 @@ from apidata import (
     DbFailure,
     request_failure,
 )
-from userjwt import Jwt
-from dbconnector import connQuery, make_connection, connExecute
-from schematypes import Order, ProductPayload, Product, Supplier
+from src.userjwt import Jwt
+from src.dbconnector import connQuery, make_connection, connExecute
+from src.schematypes import Order, ProductPayload, Product, Supplier
 
 from typing import List, Dict
 

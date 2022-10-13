@@ -6,10 +6,10 @@ from flask.wrappers import Request
 from flask_jwt_extended import create_access_token
 from argon2 import PasswordHasher
 
-from apidata import ApiResponse
-from userjwt import Jwt
+from src.apidata import ApiResponse
+from src.userjwt import Jwt
 
-from dbconnector import connQuery
+from src.dbconnector import connQuery
 
 
 @dataclass
