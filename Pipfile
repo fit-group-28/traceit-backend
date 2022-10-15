@@ -10,6 +10,8 @@ dataclasses-json = "*"
 flask-jwt-extended = "*"
 argon2-cffi = "*"
 funcy = "*"
+requests = "*"
+types-requests = "*"
 
 [dev-packages]
 black = "*"
