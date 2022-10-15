@@ -1,7 +1,6 @@
 from src.endpoints.login import validate_password
 from src.endpoints.user_regist import create_user
 from tests.helper import delete_user
-import pytest
 
 
 def test_validate_password():
