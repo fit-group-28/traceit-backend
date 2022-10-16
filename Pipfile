@@ -19,6 +19,7 @@ mypy = "*"
 pyflakes = "*"
 pytest = "*"
 pytest-cov = "*"
+pytest-html = "*"
 
 [requires]
 python_version = "3.10"
