@@ -12,6 +12,7 @@ argon2-cffi = "*"
 funcy = "*"
 requests = "*"
 types-requests = "*"
+pytest = "*"
 
 [dev-packages]
 black = "*"
