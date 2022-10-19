@@ -12,3 +12,4 @@ __pycache__
 .coverage
 assets/
 report.html
+.pytest_cache/
